@@ -19,90 +19,90 @@ provides:
 
 var FilterTable = new Class({
 
-    /* Implements options */
-    Implements: Options,
+	/* Implements options */
+	Implements: Options,
 
-    /* Set options */
-    options: {
-    	/**CSS class name of tables on which a filter should be added.
-    	*Set to false if all tables, whatever their classes, should be matched.
-    	*/
-         filterClass: 'filterable',
-         
-         /**Input placeholder.
-         */
-         placeholder: 'Filter…',
-         
-         /**Regexp options.
-         */
-         match: {
-         	/**Allow regexp input or not?
-         	*/
-         	regexp: true,
-	         /**RegExp match flags.
-	         *Defaults to 'i' (case-insensitive)
-	         */
-         	flags: 'i'
-         }
-    },
+	/* Set options */
+	options: {
+		/**CSS class name of tables on which a filter should be added.
+		*Set to false if all tables, whatever their classes, should be matched.
+		*/
+		filterClass: 'filterable',
+		
+		/**Input placeholder.
+		*/
+		placeholder: 'Filter…',
+		
+		/**Regexp options.
+		*/
+		match: {
+			/**Allow regexp input or not?
+			*/
+			regexp: true,
+			/**RegExp match flags.
+			*Defaults to 'i' (case-insensitive)
+			*/
+			flags: 'i'
+		}
+	},
 
-    /* 
-     * Constructor of class.
-     * @public    
-     */
-    initialize: function(options){
-        this.setOptions(options);
-        
-        //get all the filterable tables from document 
-        var tables = document.getElements('table' + (this.options.filterClass ? '.' + this.options.filterClass : ''));
-        
-        //loop through each table
-        tables.each(function(table,index){
-        	// create the filter input
-            var input = new Element('input', {
-                type: 'search',
-                'class': 'filter',
-                id: 'filter_'+ index,
-                placeholder: this.options.placeholder
-            });
-            
-            var form = new Element('form', {
-            	'class': 'filter',
-            	id: 'form_'+ index
-            }).grab(input).inject(table, 'before');
+	/* 
+	* Constructor of class.
+	* @public	
+	*/
+	initialize: function(options){
+		this.setOptions(options);
+		
+		//get all the filterable tables from document 
+		var tables = document.getElements('table' + (this.options.filterClass ? '.' + this.options.filterClass : ''));
+		
+		//loop through each table
+		tables.each(function(table,index){
+			// create the filter input
+			var input = new Element('input', {
+				type: 'search',
+				'class': 'filter',
+				id: 'filter_'+ index,
+				placeholder: this.options.placeholder
+			});
+			
+			var form = new Element('form', {
+				'class': 'filter',
+				id: 'form_'+ index
+			}).grab(input).inject(table, 'before');
 
-            // attach
-            var boundFilter = this.filterTable.bind(this, [input, table]);
-            input.addEvent('keyup', boundFilter);
-            input.addEvent('click', boundFilter);
-        }, this);
-    },
+			// attach
+			var boundFilter = this.filterTable.bind(this, [input, table]);
+			input.addEvent('keyup', boundFilter);
+			input.addEvent('click', boundFilter);
+		}, this);
+	},
 
-    /* 
-     * @param term (Element)
-     * @param table (Element)
-     * @public
-     */
-    filterTable: function(input, table) {
-    	var regexp = input.get('value')
-    					  .trim() // avoid that a space at the end matches all
-    					  .split(' ')
-    					  .join('|'); // each word is a different match
-    					  
-    	if (! this.options.match.regexp)
-    		regexp = regexp.escapeRegExp();
-    	
-    	//create a compiled regexp from search terms for performance
-    	regexp = new RegExp(regexp, this.options.match.flags);
-    	
-         //for each row of table execute
-         table.getElements('tbody tr').each(function(tr) {
-             tr.setStyle('display',
-             	(tr.get('text').match(regexp)
-             		? ''
-             		: 'none'
-             	)
-             );
-         });
-    }
+	/* 
+	* @param term (Element)
+	* @param table (Element)
+	* @public
+	*/
+	filterTable: function(input, table) {
+		var regexp = input.get('value')
+						  .trim() // avoid that a space at the end matches all
+						  .split(' ')
+						  .join('|'); // each word is a different match
+						
+		if (! this.options.match.regexp)
+			regexp = regexp.escapeRegExp();
+		
+		//create a compiled regexp from search terms for performance
+		regexp = new RegExp(regexp, this.options.match.flags);
+		
+		//for each row of table execute
+		table.getElements('tbody tr').each(function(tr) {
+			tr.setStyle('display',
+				(tr.get('text').match(regexp)
+					? ''
+					: 'none'
+				)
+			);
+		});
+	}
 });

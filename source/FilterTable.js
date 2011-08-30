@@ -3,16 +3,17 @@
 description: MooTools Plugin for filtering table rows.
 
 authors:
-  - Adrian Statescu (http://thinkphp.ro)
+ - Adrian Statescu (http://thinkphp.ro)
+ - Matti Schneider-Ghibaudo (http://mattischneider.fr)
 
 license:
-  - MIT-style license
+ - MIT-style license
 
 requires:
-  core/1.3: '*'
+ core/1.3: '*'
 
 provides:
-  - [FilterTable]
+ - [FilterTable]
 ...
 */
 
@@ -23,7 +24,10 @@ var FilterTable = new Class({
 
     /* Set options */
     options: {
-       filterClass: 'filterable'
+    	/**CSS class name of tables on which a filter should be added.
+    	*Set to false if all tables, whatever their classes, should be matched.
+    	*/
+         filterClass: 'filterable'
     },
 
     /* 
@@ -31,30 +35,33 @@ var FilterTable = new Class({
      * @public    
      */
     initialize: function(options){
-          this.setOptions(options); 
-          //get all the tables from document 
-          var tables = document.getElements('table');
-          //loop through each table
-          tables.each(function(table,index){
-               //if current table has attribute 'class' and if 
-               //the value of class is options.filterClass 
-               if (table.attributes['class'] && table.hasClass(this.options.filterClass)) {
-                   //creates a new form with following attributes
-                   var form = new Element('form',{'class': 'filter',id: 'form_'+ index});
-                   //creates a new input with these attributes
-	          	 var input = new Element('input',{'class': 'filter',id: 'filter_'+ index});
-                       //added handler event keyup for this input; 
-                       //when the input is keyup then the method 
-                       //filterTable is triggered
-                       input.addEvent('keyup', function(){
-                             this.filterTable(input, table);
-                   }.bind(this));
-                   //append element input in form
-                   form.appendChild(input);
-                   //insert the form before table
-	  	       table.parentNode.insertBefore(form, table);
-	         }
-          },this);
+        this.setOptions(options);
+        
+        //get all the filterable tables from document 
+        var tables = document.getElements('table' + (this.options.filterClass ? '.' + this.options.filterClass : ''));
+        
+        //loop through each table
+        tables.each(function(table,index){
+        	// create the filter input
+            var form = new Element('form', {
+            	'class': 'filter',
+            	id: 'form_'+ index
+            });
+
+            var input = new Element('input', {
+                'class': 'filter',
+                id: 'filter_'+ index
+            });
+            
+            // DOM
+            form.appendChild(input);
+            table.parentNode.insertBefore(form, table);
+
+            // attach
+            var boundFilter = this.filterTable.bind(this, [input, table]);
+            input.addEvent('keyup', boundFilter);
+            input.addEvent('click', boundFilter);
+        }, this);
     },
 
     /* 

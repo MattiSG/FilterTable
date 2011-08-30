@@ -27,7 +27,8 @@ var FilterTable = new Class({
     	/**CSS class name of tables on which a filter should be added.
     	*Set to false if all tables, whatever their classes, should be matched.
     	*/
-         filterClass: 'filterable'
+         filterClass: 'filterable',
+         placeholder: 'Filter…'
     },
 
     /* 
@@ -49,8 +50,10 @@ var FilterTable = new Class({
             });
 
             var input = new Element('input', {
+                type: 'search',
                 'class': 'filter',
-                id: 'filter_'+ index
+                id: 'filter_'+ index,
+                placeholder: this.options.placeholder
             });
             
             // DOM

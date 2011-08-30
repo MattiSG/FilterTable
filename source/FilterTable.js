@@ -81,7 +81,7 @@ var FilterTable = new Class({
 			}).grab(input).inject(table, 'before');
 
 			// attach
-			var boundFilter = this.filterTable.bind(this, [input, table]);
+			var boundFilter = this.filterTable.pass([input, table], this);
 			input.addEvent('keyup', boundFilter);
 			input.addEvent('click', boundFilter);
 		}, this);

@@ -42,7 +42,16 @@ var FilterTable = new Class({
 			/**RegExp match flags.
 			*Defaults to 'i' (case-insensitive)
 			*/
-			flags: 'i'
+			flags: 'i',
+			/**A character upon which terms are considered to be "OR" joined.
+			*Set to false to consider search terms to be expressions (no splitting).
+			*Defaults to false.
+			*Example:
+			*	| search expression | separator | "to be" | "not to" | "be not" |
+			*	|     "be not"      |    ' '    | matched |  matched |  matched |
+			*	|     "be not"      |   false   |no match | no match |  matched |
+			*/
+			separator: false
 		}
 	},
 
@@ -85,12 +94,14 @@ var FilterTable = new Class({
 	*/
 	filterTable: function(input, table) {
 		var regexp = input.get('value')
-						  .trim() // avoid that a space at the end matches all
-						  .split(' ')
-						  .join('|'); // each word is a different match
+						  .trim(); // avoid that a space at the end matches all
 						
 		if (! this.options.match.regexp)
 			regexp = regexp.escapeRegExp();
+			
+		if (this.options.match.separator)
+			regexp = regexp.split(this.options.match.separator)
+							.join('|'); // each word is a different match
 		
 		//create a compiled regexp from search terms for performance
 		regexp = new RegExp(regexp, this.options.match.flags);

@@ -44,11 +44,6 @@ var FilterTable = new Class({
         //loop through each table
         tables.each(function(table,index){
         	// create the filter input
-            var form = new Element('form', {
-            	'class': 'filter',
-            	id: 'form_'+ index
-            });
-
             var input = new Element('input', {
                 type: 'search',
                 'class': 'filter',
@@ -56,9 +51,10 @@ var FilterTable = new Class({
                 placeholder: this.options.placeholder
             });
             
-            // DOM
-            form.appendChild(input);
-            table.parentNode.insertBefore(form, table);
+            var form = new Element('form', {
+            	'class': 'filter',
+            	id: 'form_'+ index
+            }).grab(input).inject(table, 'before');
 
             // attach
             var boundFilter = this.filterTable.bind(this, [input, table]);

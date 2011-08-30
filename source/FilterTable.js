@@ -79,6 +79,8 @@ var FilterTable = new Class({
 				'class': 'filter',
 				id: 'form_'+ index
 			}).grab(input).inject(table, 'before');
+			
+			form.addEvent('submit', function() { return false }); // prevent submitting (page reload) on pressing "enter"
 
 			// attach
 			var boundFilter = this.filterTable.pass([input, table], this);
